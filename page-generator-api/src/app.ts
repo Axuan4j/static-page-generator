@@ -15,7 +15,8 @@ import { PUBLIC_DIR, TEMPLATES_DIR, UPLOAD_DIR } from './utils/path'
  */
 async function bootstrap() {
   const app = Fastify({
-    logger: true
+    logger: true,
+    bodyLimit: 10 * 1024 * 1024 // 10MB
   })
 
   const hasPublicSite = await fs.pathExists(PUBLIC_DIR)
@@ -24,7 +25,13 @@ async function bootstrap() {
     origin: true
   })
 
-  await app.register(multipart)
+  await app.register(multipart, {
+    limits: {
+      fileSize: 10 * 1024 * 1024, // 10MB
+      files: 10,
+      parts: 1000
+    }
+  })
 
   await app.register(fastifyStatic, {
     root: UPLOAD_DIR,

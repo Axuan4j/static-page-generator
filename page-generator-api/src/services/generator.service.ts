@@ -9,7 +9,7 @@ import { NginxService } from './nginx.service';
 import { sanitizeFolderName } from '../utils/validate';
 import { UPLOAD_DIR } from '../utils/path';
 
-const PREVIEW_ASSET_BASE_URL = 'http://127.0.0.1:3000';
+const PREVIEW_ASSET_BASE_URL = '';
 
 /**
  * 负责模板预览、图片落盘和最终页面生成。
