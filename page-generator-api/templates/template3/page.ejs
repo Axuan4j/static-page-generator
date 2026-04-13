@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+    <title><%= title %></title>
+    <link rel="stylesheet" type="text/css" href="static/swiper-bundle.min.css"/>
+    <!-- Swiper 脚本 -->
+    <script type="text/javascript" src="static/swiper-bundle.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f4f4f4;
+        }
+
+        #app {
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .swiper-pagination-bullet {
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, .5);
+            opacity: 1;
+            position: relative;
+            bottom: -5px;
+        }
+
+        .swiper-pagination-bullet-active {
+            background: #fff;
+            width: 10px;
+            border-radius: 5px;
+        }
+
+        .swiper-slide img {
+            max-width: 100%;
+            height: 100%;
+        }
+
+        #main {
+            width: 100%;
+            height: 93.5vh;
+            overflow-y: auto;
+        }
+
+        .image {
+            width: 100%;
+            height: auto;
+            margin-top: -10px;
+        }
+
+        .image:first-child {
+            margin-top: 0;
+        }
+
+        .product_info {
+            width: 95%;
+            margin: 2vh auto;
+            background-color: #fff;
+        }
+
+        .product_title {
+            width: 100%;
+            padding: 1vh;
+            font-size: 4vw;
+            font-weight: bolder;
+        }
+
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            padding-bottom: 1vh;
+        }
+
+        .tag {
+            margin: 0.5vh;
+            padding: 0.5vh;
+            background-color: #ed1515;
+            color: #fff;
+            font-size: 2.5vw;
+            border-radius: 10px;
+        }
+
+        .quota-box {
+            width: 100%;
+            max-width: 90%;
+            margin: 20px auto;
+            font-size: 14px;
+        }
+
+        /* 上方文字 */
+        .quota-text {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            color: #333;
+        }
+
+        .quota-text .right {
+            color: #e60012; /* 红色 */
+            font-weight: bold;
+        }
+
+        /* 进度条背景 */
+        .progress {
+            width: 100%;
+            height: 6px; /* 细一点 */
+            background: #ffe3c2; /* 浅橘色背景 */
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        /* 进度条本体 */
+        .progress-bar {
+            width: 95%; /* 占比 */
+            height: 100%;
+            background: linear-gradient(
+                    90deg,
+                    #ff9f1a,
+                    #ff6a00
+            ); /* 橘黄色渐变 */
+            border-radius: 3px;
+        }
+
+        .product_btn_container {
+            width: 100%;
+            display: flex;
+            position: relative;
+            margin-bottom: 2vh;
+        }
+
+        .product_btn {
+            width: 80%;
+            height: 7vh;
+            margin: 1vh auto;
+            background-color: red;
+            color: #fff;
+            border: none;
+            border-radius: 3vh;
+            font-size: 4vw;
+        }
+
+        .less_time {
+            width: 35vw;
+            height: 4vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #a22b1b;
+            font-weight: bold;
+            position: absolute;
+            right: 15vw;
+            top: -1.5vh;
+            background-color: rgb(248, 231, 28);
+            border-radius: 25vw 25vw 25vw 0;
+            font-size: 3.5vw;
+        }
+
+        #time {
+            margin-left: 1vw;
+        }
+
+        .scroll-container {
+            width: 95%;
+            height: 45vh; /* 5条 * 每条50px */
+            overflow: hidden;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fff;
+            position: relative;
+            margin: 1vh auto 3vh auto;
+        }
+
+        .scroll-list {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+        }
+
+        .scroll-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 10px;
+            height: 50px;
+            border-bottom: 1px solid #eee;
+            box-sizing: border-box;
+        }
+
+        .item-left {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .item-left .name-phone {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .item-left .product {
+            font-size: 12px;
+            color: #555;
+        }
+
+        .item-middle {
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+            color: #1E90FF;
+        }
+
+        .item-right {
+            display: flex;
+            flex-direction: column;
+            text-align: right;
+            font-size: 12px;
+            color: #888;
+        }
+
+
+        /* ================= 底部固定按钮 ================= */
+        #fixed_btn {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 6.5vh;
+            font-size: 5vw;
+            color: #fff;
+            background: red;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <div id="main">
+        <div class="swiper mySwiper">
+            <div class="swiper-wrapper">
+                <% swiper_images.forEach(img => { %>
+                    <div class="swiper-slide"><img src="<%= img %>" alt="slider_image"></div>
+                <% }) %>
+            </div>
+            <div class="swiper-pagination"></div>
+        </div>
+
+        <div class="product_info">
+            <div class="product_title"><%= productName %></div>
+            <div class="tag-container">
+                <% tags.split(',').forEach(item => { %>
+                    <span class="tag"><%= item %></span>
+                <% }) %>
+            </div>
+        </div>
+
+        <div class="quota-box">
+            <div class="quota-text">
+                <span class="left">今日剩余名额 5%</span>
+                <span class="right">95%</span>
+            </div>
+
+            <div class="progress">
+                <div class="progress-bar"></div>
+            </div>
+        </div>
+
+        <div class="product_btn_container">
+            <button class="product_btn"><%= bottonName %></button>
+            <div class="less_time">剩余有效时间 <span id="time">15:00</span></div>
+        </div>
+
+        <div class="scroll-container">
+            <div class="scroll-list" id="scrollList">
+                <!-- JS 会生成滚动项 -->
+            </div>
+        </div>
+
+        <% main_images.forEach(img => { %>
+            <img src="<%= img %>" class="image" alt="图片">
+        <% }) %>
+    </div>
+
+    <div id="fixed_btn"><%= bottonName %></div>
+</div>
+
+<script>
+    const swiper = new Swiper(".mySwiper", {
+        loop: true,
+        autoplay: {delay: 3000},
+        pagination: {el: ".swiper-pagination", clickable: true},
+        navigation: {
+            enabled: false,
+        },
+    });
+
+    const surnames = ["张", "王", "李", "赵", "刘", "陈", "杨", "黄", "周", "吴"];
+    const product = '<%= simpleName %>';
+    const cities = ["北京", "上海", "广州", "深圳", "杭州", "成都", "重庆", "南京", "武汉", "西安"];
+
+    // 随机生成一条数据
+    function generateItem() {
+        const surname = surnames[Math.floor(Math.random() * surnames.length)];
+        const gender = Math.random() < 0.5 ? "女士" : "先生";
+        const phone = `1${Math.floor(Math.random() * 10)}${Math.floor(Math.random() * 10)}****${Math.floor(Math.random() * 9000 + 1000)}`;
+        const city = cities[Math.floor(Math.random() * cities.length)];
+        const minutesAgo = Math.floor(Math.random() * 7) + 3; // 3-9
+        return {name: surname + gender, phone, product, city, time: minutesAgo + "分钟前"};
+    }
+
+    // 渲染列表
+    const scrollList = document.getElementById("scrollList");
+    let items = [];
+    for (let i = 0; i < 20; i++) { // 生成20条随机数据
+        items.push(generateItem());
+    }
+
+    // 创建 DOM
+    items.forEach(it => {
+        const div = document.createElement("div");
+        div.className = "scroll-item";
+        div.innerHTML = `
+        <div class="item-left">
+            <div class="name-phone">${it.name} ${it.phone}</div>
+            <div class="product">${it.product}</div>
+        </div>
+        <div class="item-middle">下单成功</div>
+        <div class="item-right">
+            <div>${it.city}</div>
+            <div>${it.time}</div>
+        </div>
+    `;
+        scrollList.appendChild(div);
+    });
+
+    // 自动滚动
+    const itemHeight = 50; // 每条高度
+    let position = 0;
+
+    function scrollStep() {
+        position += 1; // 每次滚动1px
+        if (position >= itemHeight) {
+            // 移动完一条，重置
+            scrollList.appendChild(scrollList.firstElementChild); // 将第一个移到最后
+            position = 0;
+        }
+        scrollList.style.transform = `translateY(-${position}px)`;
+    }
+
+    function gotoLink() {
+        const queryParams = new URLSearchParams(window.location.search);
+        const path = queryParams.get('path');
+        if (path) {
+            window.location.href = path;
+        }
+    }
+
+    document.querySelector(".product_btn").addEventListener('click', function () {
+        gotoLink()
+    })
+
+    document.querySelector('#fixed_btn').addEventListener('click', function () {
+        gotoLink()
+    })
+
+    window.onload = function () {
+        // 倒计时15分钟
+        let time = new Date("2025-12-20 00:15:00")
+        setInterval(function () {
+            // 每次减少1秒更新时间
+            time = new Date(time.getTime() - 1000)
+            let minutes = time.getMinutes()
+            let seconds = time.getSeconds()
+            if (seconds < 10) {
+                seconds = '0' + seconds
+            }
+            document.querySelector('#time').innerHTML = `${minutes}:${seconds}`
+        }, 1000)
+
+        // 每20ms滚动1px，可调整速度
+        setInterval(scrollStep, 20);
+    }
+</script>
+
+</body>
+</html>

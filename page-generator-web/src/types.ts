@@ -1,0 +1,62 @@
+export interface FieldOption {
+  label: string
+  value: string | number | boolean
+}
+
+export interface ArrayItemField {
+  key: string
+  label: string
+  type: 'input' | 'textarea' | 'number' | 'select' | 'image'
+  required?: boolean
+  options?: FieldOption[]
+}
+
+export interface TemplateField {
+  key: string
+  label: string
+  type: 'input' | 'textarea' | 'number' | 'select' | 'switch' | 'array' | 'image'
+  required?: boolean
+  placeholder?: string
+  defaultValue?: any
+  options?: FieldOption[]
+  itemFields?: ArrayItemField[]
+}
+
+export interface TemplateMeta {
+  code: string
+  name: string
+  description?: string
+  engine: 'ejs'
+  output: {
+    htmlFile: string
+    staticDir: string
+  }
+  fixedFields: TemplateField[]
+  dynamicFields: TemplateField[]
+}
+
+export interface ProjectConfig {
+  code: string
+  name: string
+  outputRoot: string
+  nginxIncludeDir: string
+  nginxBinPath?: string
+  locationPrefix: string
+  domain?: string
+}
+
+export interface TemplateDetailResponse {
+  meta: TemplateMeta
+  content: string
+}
+
+export interface PreviewResponse {
+  html: string
+}
+
+export interface GenerateResponse {
+  success: boolean
+  outputDir: string
+  htmlFile: string
+  nginxConfFile: string
+}

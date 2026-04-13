@@ -1,0 +1,9 @@
+{
+  "code": "nginx-project",
+  "name": "静态页面",
+  "outputRoot": "./generated/demo-project",
+  "nginxIncludeDir": "./generated/nginx-includes",
+  "nginxBinPath": "/opt/module/tengine/sbin/nginx",
+  "locationPrefix": "/",
+  "domain": "5q6.cn"
+}

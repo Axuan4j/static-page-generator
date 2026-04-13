@@ -1,0 +1,78 @@
+{
+  "code": "template3",
+  "name": "轮播商品营销模板",
+  "description": "顶部轮播 + 商品标签 + 倒计时 + 滚动下单 + 长图 + 固定按钮",
+  "engine": "ejs",
+  "output": {
+    "htmlFile": "index.html",
+    "staticDir": "static"
+  },
+  "fixedFields": [
+    {
+      "key": "title",
+      "label": "页面标题",
+      "type": "input",
+      "required": true
+    },
+    {
+      "key": "folderName",
+      "label": "文件夹名",
+      "type": "input",
+      "required": true
+    }
+  ],
+  "dynamicFields": [
+    {
+      "key": "swiper_images",
+      "label": "轮播图数组",
+      "type": "array",
+      "required": true,
+      "itemFields": [
+        {
+          "key": "value",
+          "label": "图片地址",
+          "type": "image",
+          "required": true
+        }
+      ]
+    },
+    {
+      "key": "main_images",
+      "label": "主图数组",
+      "type": "array",
+      "required": true,
+      "itemFields": [
+        {
+          "key": "value",
+          "label": "图片地址",
+          "type": "image",
+          "required": true
+        }
+      ]
+    },
+    {
+      "key": "productName",
+      "label": "商品标题",
+      "type": "input",
+      "required": true
+    },
+    {
+      "key": "tags",
+      "label": "标签(逗号分隔)",
+      "type": "input",
+      "required": true
+    },
+    {
+      "key": "bottonName",
+      "label": "按钮文案",
+      "type": "input",
+      "required": true
+    },
+    {
+      "key": "simpleName",
+      "label": "滚动列表商品简称",
+      "type": "input",
+      "required": true
+    }
+  ]
+}
