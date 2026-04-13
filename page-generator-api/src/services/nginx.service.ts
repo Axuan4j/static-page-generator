@@ -8,9 +8,8 @@ export class NginxService {
 
     return `
 location ${locationPath} {
-    alias ${distPath}/;
+    alias ${distPath};
     index ${indexFile};
-    try_files $uri $uri/ ${locationPath}${indexFile};
 }
     `.trim();
   }

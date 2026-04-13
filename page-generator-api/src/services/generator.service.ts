@@ -192,7 +192,7 @@ export class GeneratorService {
             ? project.locationPrefix
             : `${project.locationPrefix}/`;
 
-        const locationPath = `${locationPrefix}${folderName}/`;
+        const locationPath = `${locationPrefix}${folderName}`;
 
         const nginxConf = this.nginxService.buildIncludeConf({
             locationPath,

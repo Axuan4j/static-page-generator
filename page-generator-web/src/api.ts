@@ -6,7 +6,7 @@ import type {
   TemplateMeta
 } from './types'
 
-export const BASE_URL = 'http://127.0.0.1:3000'
+export const BASE_URL = ''
 
 async function request<T>(url: string, options?: RequestInit): Promise<T> {
   const headers = new Headers(options?.headers)
