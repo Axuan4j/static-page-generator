@@ -744,6 +744,8 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  max-height: 40%;
+  overflow: auto;
 }
 
 .template-item {

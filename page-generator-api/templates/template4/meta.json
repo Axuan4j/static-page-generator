@@ -1,0 +1,46 @@
+{
+  "code": "template4",
+  "name": "长图底部跳动按钮跳转模板",
+  "description": "主图列表 + 底部跳动按钮",
+  "engine": "ejs",
+  "output": {
+    "htmlFile": "index.html",
+    "staticDir": "static"
+  },
+  "fixedFields": [
+    {
+      "key": "title",
+      "label": "页面标题",
+      "type": "input",
+      "required": true
+    },
+    {
+      "key": "folderName",
+      "label": "文件夹名",
+      "type": "input",
+      "required": true
+    }
+  ],
+  "dynamicFields": [
+    {
+      "key": "main_images",
+      "label": "主图数组",
+      "type": "array",
+      "required": true,
+      "itemFields": [
+        {
+          "key": "value",
+          "label": "图片地址",
+          "type": "image",
+          "required": true
+        }
+      ]
+    },
+    {
+      "key": "button_text",
+      "label": "底部跳转按钮文字",
+      "type": "input",
+      "required": true
+    }
+  ]
+}
