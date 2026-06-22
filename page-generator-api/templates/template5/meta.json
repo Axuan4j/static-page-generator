@@ -41,6 +41,13 @@
       "type": "input",
       "required": true,
       "defaultValue": "免费领取"
+    },
+    {
+      "key": "domain_text",
+      "label": "请求后端域名",
+      "type": "input",
+      "required": true,
+      "defaultValue": ""
     }
   ]
 }

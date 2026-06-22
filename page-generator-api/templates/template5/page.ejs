@@ -367,11 +367,11 @@
     }
 
     function validPhone(value) {
-      return /^1\\d{10}$/.test(value);
+      return /^1\d{10}$/.test(value);
     }
 
     async function submitClaim(payload) {
-      const submitUrl = "";
+      const submitUrl = "<%= domain_text %>/openApi/submitPhoneCollect";
       const formBody = new URLSearchParams(payload).toString();
       const response = await fetch(submitUrl, {
         method: "POST",
@@ -465,11 +465,11 @@
         });
 
         if (result && result.code === 0) {
-          showToast(result.message || "提交成功");
+          showToast(result.msg || "提交成功");
           return;
         }
 
-        showToast((result && result.message) || "提交失败，请稍后重试");
+        showToast((result && result.msg) || "提交失败，请稍后重试");
       } catch (error) {
         showToast("提交失败，请稍后重试");
       }
