@@ -370,6 +370,19 @@
       return /^1\\d{10}$/.test(value);
     }
 
+    async function submitClaim(payload) {
+      const submitUrl = "";
+      const formBody = new URLSearchParams(payload).toString();
+      const response = await fetch(submitUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+        },
+        body: formBody
+      });
+      return response.json();
+    }
+
     let audioActivated = false;
 
     async function ensureAudioPlayback() {
@@ -445,7 +458,21 @@
         showToast("请输入正确的11位手机号");
         return;
       }
-      showToast("领取成功，稍后会有专人与您联系");
+      try {
+        const result = await submitClaim({
+          phone: value,
+          from: window.location.href
+        });
+
+        if (result && result.code === 0) {
+          showToast(result.message || "提交成功");
+          return;
+        }
+
+        showToast((result && result.message) || "提交失败，请稍后重试");
+      } catch (error) {
+        showToast("提交失败，请稍后重试");
+      }
     });
 
     openPolicyInline.addEventListener("click", openPolicy);
