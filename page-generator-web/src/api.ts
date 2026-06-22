@@ -83,7 +83,7 @@ export function reloadNginx(projectCode: string) {
   })
 }
 
-export async function uploadImage(file: File): Promise<{ url: string }> {
+export async function uploadAsset(file: File): Promise<{ url: string }> {
   const formData = new FormData()
   formData.append('file', file)
 

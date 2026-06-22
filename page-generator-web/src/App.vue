@@ -118,6 +118,27 @@
                         </div>
                       </div>
                     </template>
+                    <template v-else-if="field.type === 'audio'">
+                      <div class="compact-upload">
+                        <t-upload
+                          :request-method="(file) => handleAudioUploadProxy(file, field.key)"
+                          :files="uploadFiles[field.key] || []"
+                          @update:files="(files) => { uploadFiles[field.key] = files }"
+                          @remove="() => clearAudioField(field.key)"
+                          :max="1"
+                          theme="custom"
+                          accept="audio/*"
+                          :show-upload-list="false"
+                        >
+                          <t-button theme="primary" variant="outline">选择音频</t-button>
+                        </t-upload>
+
+                        <div v-if="getSingleAudioUrl(field.key)" class="upload-preview-card upload-preview-card--audio">
+                          <audio :src="getSingleAudioUrl(field.key)" controls preload="metadata" class="upload-preview-audio"></audio>
+                          <t-button theme="danger" variant="text" size="small" @click="clearAudioField(field.key)">移除音频</t-button>
+                        </div>
+                      </div>
+                    </template>
                   </div>
                 </div>
               </div>
@@ -162,6 +183,27 @@
                         <div v-if="getSingleImageUrl(field.key)" class="upload-preview-card">
                           <img :src="getSingleImageUrl(field.key)" :alt="field.label" class="upload-preview-image" />
                           <t-button theme="danger" variant="text" size="small" @click="clearImageField(field.key)">移除图片</t-button>
+                        </div>
+                      </div>
+                    </template>
+                    <template v-else-if="field.type === 'audio'">
+                      <div class="compact-upload">
+                        <t-upload
+                          :request-method="(file) => handleAudioUploadProxy(file, field.key)"
+                          :files="uploadFiles[field.key] || []"
+                          @update:files="(files) => { uploadFiles[field.key] = files }"
+                          @remove="() => clearAudioField(field.key)"
+                          :max="1"
+                          theme="custom"
+                          accept="audio/*"
+                          :show-upload-list="false"
+                        >
+                          <t-button theme="primary" variant="outline">选择音频</t-button>
+                        </t-upload>
+
+                        <div v-if="getSingleAudioUrl(field.key)" class="upload-preview-card upload-preview-card--audio">
+                          <audio :src="getSingleAudioUrl(field.key)" controls preload="metadata" class="upload-preview-audio"></audio>
+                          <t-button theme="danger" variant="text" size="small" @click="clearAudioField(field.key)">移除音频</t-button>
                         </div>
                       </div>
                     </template>
@@ -287,7 +329,7 @@
 import { computed, nextTick, onMounted, reactive, ref } from 'vue'
 import { MessagePlugin } from 'tdesign-vue-next'
 import type { UploadFile } from 'tdesign-vue-next'
-import { BASE_URL, generatePage, getProjects, getTemplateDetail, getTemplates, previewTemplate, reloadNginx, saveTemplate, uploadImage } from './api'
+import { BASE_URL, generatePage, getProjects, getTemplateDetail, getTemplates, previewTemplate, reloadNginx, saveTemplate, uploadAsset } from './api'
 import type { GenerateResponse, ProjectConfig, TemplateField, TemplateMeta } from './types'
 
 const templates = ref<TemplateMeta[]>([])
@@ -336,6 +378,10 @@ function normalizeImageUrl(url?: string) {
   return `${BASE_URL}${url}`
 }
 
+function getAssetName(url: string, fallback: string) {
+  return url.split('/').pop() || fallback
+}
+
 /**
  * 根据当前表单值恢复数组图片上传列表，保证回显稳定。
  */
@@ -364,6 +410,10 @@ function getArrayImageUrl(fieldKey: string, index: number, itemKey: string) {
   return normalizeImageUrl(formData[fieldKey]?.[index]?.[itemKey])
 }
 
+function getSingleAudioUrl(fieldKey: string) {
+  return normalizeImageUrl(formData[fieldKey])
+}
+
 /**
  * 根据模板元数据重置表单和上传列表。
  */
@@ -380,7 +430,7 @@ function resetFormData(meta: TemplateMeta) {
       nextData[field.key] = field.defaultValue ?? ''
     }
 
-    if (field.type === 'image') {
+    if (field.type === 'image' || field.type === 'audio') {
       uploadFiles[field.key] = []
     }
   })
@@ -432,6 +482,10 @@ function clearImageField(fieldKey: string) {
   uploadFiles[fieldKey] = []
 }
 
+function clearAudioField(fieldKey: string) {
+  clearImageField(fieldKey)
+}
+
 /**
  * 清理数组项中的图片值。
  */
@@ -446,11 +500,11 @@ function clearArrayImageField(fieldKey: string, index: number, itemKey: string) 
  */
 async function handleImageUploadProxy(file: UploadFile, fieldKey: string) {
   try {
-    const result = await uploadImage(file.raw as File)
+    const result = await uploadAsset(file.raw as File)
     const publicUrl = normalizeImageUrl(result.url)
     formData[fieldKey] = publicUrl
     uploadFiles[fieldKey] = [{
-      name: publicUrl.split('/').pop() || 'image',
+      name: getAssetName(publicUrl, 'image'),
       url: publicUrl,
       status: 'success',
       percent: 100
@@ -467,9 +521,27 @@ async function handleImageUploadProxy(file: UploadFile, fieldKey: string) {
  */
 async function handleArrayImageUploadProxy(file: UploadFile, fieldKey: string, index: number, itemKey: string) {
   try {
-    const result = await uploadImage(file.raw as File)
+    const result = await uploadAsset(file.raw as File)
     formData[fieldKey][index][itemKey] = normalizeImageUrl(result.url)
     return { status: 'success', response: { url: formData[fieldKey][index][itemKey] } }
+  } catch (error: any) {
+    showMessage(error.message || '上传失败', 'error')
+    return { status: 'fail', error: error.message }
+  }
+}
+
+async function handleAudioUploadProxy(file: UploadFile, fieldKey: string) {
+  try {
+    const result = await uploadAsset(file.raw as File)
+    const publicUrl = normalizeImageUrl(result.url)
+    formData[fieldKey] = publicUrl
+    uploadFiles[fieldKey] = [{
+      name: getAssetName(publicUrl, 'audio'),
+      url: publicUrl,
+      status: 'success',
+      percent: 100
+    }]
+    return { status: 'success', response: { url: publicUrl } }
   } catch (error: any) {
     showMessage(error.message || '上传失败', 'error')
     return { status: 'fail', error: error.message }
@@ -885,6 +957,10 @@ onMounted(async () => {
   margin-top: 8px;
 }
 
+.upload-preview-card--audio {
+  width: min(100%, 320px);
+}
+
 .upload-preview-image {
   display: block;
   width: 120px;
@@ -896,6 +972,10 @@ onMounted(async () => {
 
 .upload-preview-image--nested {
   width: 100px;
+}
+
+.upload-preview-audio {
+  width: 100%;
 }
 
 .preview-wrap,

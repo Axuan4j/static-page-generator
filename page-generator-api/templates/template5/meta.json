@@ -1,0 +1,46 @@
+{
+  "code": "template5",
+  "name": "音频主图领取页模板",
+  "description": "单主图 + 自动播放音频 + 底部领取按钮",
+  "engine": "ejs",
+  "output": {
+    "htmlFile": "index.html",
+    "staticDir": "static"
+  },
+  "fixedFields": [
+    {
+      "key": "title",
+      "label": "HTML 标题",
+      "type": "input",
+      "required": true,
+      "defaultValue": "免费领取名额"
+    },
+    {
+      "key": "folderName",
+      "label": "文件夹名",
+      "type": "input",
+      "required": true
+    }
+  ],
+  "dynamicFields": [
+    {
+      "key": "main_image",
+      "label": "主图",
+      "type": "image",
+      "required": true
+    },
+    {
+      "key": "bg_audio",
+      "label": "音频",
+      "type": "audio",
+      "required": true
+    },
+    {
+      "key": "button_text",
+      "label": "按钮文字",
+      "type": "input",
+      "required": true,
+      "defaultValue": "免费领取"
+    }
+  ]
+}

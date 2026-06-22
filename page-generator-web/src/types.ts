@@ -6,7 +6,7 @@ export interface FieldOption {
 export interface ArrayItemField {
   key: string
   label: string
-  type: 'input' | 'textarea' | 'number' | 'select' | 'image'
+  type: 'input' | 'textarea' | 'number' | 'select' | 'image' | 'audio'
   required?: boolean
   options?: FieldOption[]
 }
@@ -14,7 +14,7 @@ export interface ArrayItemField {
 export interface TemplateField {
   key: string
   label: string
-  type: 'input' | 'textarea' | 'number' | 'select' | 'switch' | 'array' | 'image'
+  type: 'input' | 'textarea' | 'number' | 'select' | 'switch' | 'array' | 'image' | 'audio'
   required?: boolean
   placeholder?: string
   defaultValue?: any
