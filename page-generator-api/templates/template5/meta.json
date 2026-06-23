@@ -48,6 +48,13 @@
       "type": "input",
       "required": true,
       "defaultValue": ""
+    },
+    {
+      "key": "uid",
+      "label": "数据归属的商城用户ID",
+      "type": "input",
+      "required": true,
+      "defaultValue": ""
     }
   ]
 }

@@ -320,6 +320,7 @@
       <label class="input-shell">
         <span class="input-label">手机号码</span>
         <input id="phone" type="tel" maxlength="11" inputmode="numeric" placeholder="您的信息将被严格保密">
+        <input id="uid" type="hidden" name="uid" value="<%= uid %>">
       </label>
       <button class="cta" id="claimBtn" type="button"><%= button_text %></button>
       <div class="agreement">
@@ -354,6 +355,7 @@
     const policyContent = document.getElementById("policyContent");
     const closeModal = document.getElementById("closeModal");
     const openPolicyInline = document.getElementById("openPolicyInline");
+    const uid = document.getElementById("uid")
 
     let policyLoaded = false;
 
@@ -449,6 +451,7 @@
 
     claimBtn.addEventListener("click", async () => {
       const value = phoneInput.value.trim();
+      const uid = phoneInput.value.trim();
       await ensureAudioPlayback();
       if (!agreePolicy.checked) {
         showToast("请先勾选隐私协议");
@@ -458,10 +461,15 @@
         showToast("请输入正确的11位手机号");
         return;
       }
+      if (!uid) {
+        showToast("配置错误,缺少UID,提交失败");
+        return;
+      }
       try {
         const result = await submitClaim({
           phone: value,
-          from: window.location.href
+          from: window.location.href,
+          uid: uid
         });
 
         if (result && result.code === 0) {
