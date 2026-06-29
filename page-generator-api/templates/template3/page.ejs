@@ -243,7 +243,18 @@
     </style>
 </head>
 <body>
-
+<% if (typeof bg_audio !== 'undefined' && bg_audio) { %>
+    <audio
+            id="bgAudio"
+            src="<%= bg_audio %>"
+            loop
+            autoplay
+            preload="auto"
+            playsinline
+            webkit-playsinline
+            x5-playsinline>
+    </audio>
+<% } %>
 <div id="app">
     <div id="main">
         <div class="swiper mySwiper">
@@ -372,6 +383,50 @@
     document.querySelector('#fixed_btn').addEventListener('click', function () {
         gotoLink()
     })
+
+    let audioActivated = false;
+    const audio = document.getElementById("bgAudio");
+
+    async function ensureAudioPlayback() {
+        try {
+            if (audioActivated && !audio.paused) return;
+            audio.muted = false;
+            await audio.play();
+            audioActivated = true;
+        } catch (error) {
+            // Mobile browsers may require a user gesture first.
+        }
+    }
+
+    function bindAudioAutoPlay() {
+        const retryPlay = () => {
+            ensureAudioPlayback();
+        };
+
+        document.addEventListener("DOMContentLoaded", retryPlay);
+        window.addEventListener("load", retryPlay);
+        window.addEventListener("pageshow", retryPlay);
+        document.addEventListener("WeixinJSBridgeReady", retryPlay, false);
+        document.addEventListener("YixinJSBridgeReady", retryPlay, false);
+        document.addEventListener("readystatechange", () => {
+            if (document.readyState === "complete") {
+                retryPlay();
+            }
+        });
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "visible") {
+                retryPlay();
+            }
+        });
+        audio.addEventListener("canplay", retryPlay);
+        document.addEventListener("click", retryPlay, {once: true});
+        document.addEventListener("touchstart", retryPlay, {once: true});
+    }
+
+    if (audio) {
+        bindAudioAutoPlay();
+        ensureAudioPlayback();
+    }
 
     window.onload = function () {
         // 倒计时15分钟

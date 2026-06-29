@@ -51,6 +51,12 @@
       ]
     },
     {
+      "key": "bg_audio",
+      "label": "音频",
+      "type": "audio",
+      "required": true
+    },
+    {
       "key": "productName",
       "label": "商品标题",
       "type": "input",
