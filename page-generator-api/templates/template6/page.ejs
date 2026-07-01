@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title><%= title %></title>
+    <link rel="stylesheet" type="text/css" href="static/swiper-bundle.min.css"/>
+    <!-- Swiper 脚本 -->
+    <script type="text/javascript" src="static/swiper-bundle.min.js"></script>
+    <style>
+        :root {--bg: #fafaf9;--bg-soft: #f5f5f0;--white: #ffffff;--text: #1c1917;--muted: #6b7280;--red: #d90416;--red-deep: #b10312;--gold: #ffdc73;--gold-deep: #f7b84f;--line: rgba(0, 0, 0, 0.06);--shadow: 0 0.8vh 2.2vh rgba(0, 0, 0, 0.08);--radius: 3.2vw;}
+        * {box-sizing: border-box;}
+        html, body {margin: 0;background: var(--bg);color: var(--text);font-family: "PingFang SC", "Microsoft YaHei", sans-serif;}
+        body {overflow-x: hidden;}
+        img {display: block;max-width: 100%;}
+        .page {width: 100%;min-height: 100vh;background: linear-gradient(180deg, var(--bg), var(--bg-soft));padding-bottom: 16vh;}
+        .header-price {background: linear-gradient(90deg, #e2091d, #e86d63);display: flex;justify-content: space-between;align-items: flex-start;padding: 1.6vh 2.6vw;box-shadow: 0 0.4vh 1.8vh rgba(235, 9, 29, 0.25);}
+        .price-left .num {font-size: 5vw;font-weight: 800;color: #fff;line-height: 1.35;}
+        .price-left .num .subsidy,.price-left .num .sale {font-size: 6vw;}
+        .price-left .exchange {margin-top: 0.6vh;color: rgba(255, 255, 255, 0.92);font-size: 3.4vw;}
+        .price-right {color: rgba(255, 255, 255, 0.9);font-size: 3.3vw;text-decoration: line-through;padding-top: 0.4vh;white-space: nowrap;}
+        .main {padding: 0 2.6vw;}.card {background: var(--white);border-radius: var(--radius);box-shadow: var(--shadow);border: 0.2vw solid var(--line);margin-top: 1.8vh;}
+        .title-card {padding: 1.8vh 3vw;}.title-text {font-size: 4.4vw;line-height: 1.55;font-weight: 700;color: var(--text);}.tags {padding-top: 1.2vh;display: flex;gap: 1.6vw;flex-wrap: wrap;}
+        .tag {background: linear-gradient(135deg, #c41e3a, #8b0000);color: #fff;font-size: 3vw;padding: 0.8vh 1.8vw;border-radius: 1.4vw;box-shadow: 0 0.2vh 0.8vh rgba(196, 30, 58, 0.3);}
+        .activity-card {padding: 1.4vh 3vw;font-size: 3.4vw;line-height: 1.7;color: #4b5563;font-weight: 600;}.activity-card .accent {color: #c41e3a;font-size: 4.9vw;font-weight: 800;}
+        .enough-card {display: flex;align-items: center;gap: 2vw;padding: 1.5vh 2.6vw;}
+        .enough-title {flex: 0 0 auto;font-size: 3.6vw;font-weight: 800;color: #c41e3a;}
+        .enough-items {display: grid;grid-template-columns: repeat(4, minmax(0, 1fr));gap: 1vw;width: 100%;}
+        .enough-item {font-size: 2.9vw;color: #444;white-space: nowrap;}
+        .enough-item strong {display: inline-grid;place-items: center;width: 4vw;height: 4vw;margin-right: 0.8vw;border-radius: 50%;background: #fff3f4;color: #c41e3a;font-size: 2.7vw;}
+        .purchase-card {overflow: hidden;}
+        .purchase-header {display: flex;justify-content: space-between;align-items: center;padding: 1.7vh 3vw 1.2vh;border-bottom: 0.2vw solid #f2f2f2;font-size: 3.3vw;color: #444;}
+        .purchase-header .count {color: #d90416;font-weight: 800;margin: 0 0.8vw;}
+        .purchase-tag {background: #ffe8e8;color: #d90416;padding: 0.6vh 1.8vw;border-radius: 999px;font-size: 2.9vw;font-weight: 700;}
+        .purchase-list-wrap {max-height: 32vh;overflow: hidden;}
+        .purchase-list {display: flex;flex-direction: column;}
+        .purchase-item {display: flex;align-items: center;gap: 2vw;padding: 1.6vh 3vw;border-bottom: 0.2vw solid #f3f3f3;}
+        .purchase-avatar {width: 9vw;height: 9vw;border-radius: 50%;overflow: hidden;flex: 0 0 auto;}
+        .purchase-avatar img {width: 100%;height: 100%;object-fit: cover;}
+        .purchase-info {flex: 1;min-width: 0;font-size: 3vw;color: #666;line-height: 1.55;}
+        .purchase-name {color: #111;font-weight: 700;margin-right: 0.8vw;}
+        .purchase-desc {color: #444;}
+        .purchase-action a {display: inline-block;white-space: nowrap;background: #e11d2e;color: #fff;text-decoration: none;padding: 1vh 2.2vw;border-radius: 999px;font-size: 3vw;font-weight: 700;box-shadow: 0 0.5vh 1vh rgba(225, 29, 46, 0.22);}
+        .comments-card {padding: 1.8vh 3vw;}
+        .section-head {display: flex;justify-content: space-between;align-items: center;margin-bottom: 1.4vh;}
+        .section-head .title {font-size: 4vw;font-weight: 800;}
+        .section-head .rate {font-size: 3.1vw;color: #d90416;font-weight: 700;}
+        .comment-item + .comment-item {margin-top: 1.5vh;padding-top: 1.5vh;border-top: 0.2vw solid #f2f2f2;}
+        .comment-user {font-size: 3.4vw;font-weight: 700;margin-bottom: 0.8vh;color: #222;}
+        .comment-content {font-size: 3.3vw;line-height: 1.75;color: #555;}
+        .detail-images {margin-top: 1.6vh;background: #fff;}
+        .detail-images img {width: 100%;height: auto;}
+        .hint-bar {margin: 1.8vh 2.6vw 0;text-align: center;font-size: 3.6vw;font-weight: 800;color: #7c2d12;background: linear-gradient(90deg, #fff0d0, #fde68a);border-radius: 999px;padding: 1.3vh 2vw;box-shadow: 0 0.5vh 1.4vh rgba(251, 191, 36, 0.18);}
+        .hint-tip {margin: 0.8vh 2.6vw 0;text-align: center;font-size: 3vw;color: #92400e;}
+        .footer-bar {position: fixed;left: 0;right: 0;bottom: 0;background: rgba(255, 255, 255, 0.97);box-shadow: 0 -0.8vh 2.2vh rgba(0, 0, 0, 0.08);padding: 1.2vh 0 1.5vh;z-index: 50;}
+        .footer-btn {width: 92vw;margin: 0 auto;position: relative;}
+        .footer-btn button {width: 100%;border: 0;border-radius: 999px;background: linear-gradient(180deg, #ff3838, #d90416);color: #fff;min-height: 6.4vh;font-size: 4.5vw;font-weight: 800;box-shadow: 0 0.8vh 1.6vh rgba(217, 4, 22, 0.24);}
+        .footer-btn p {margin: 0.7vh 0 0;text-align: center;color: #c41e3a;font-size: 3vw;font-weight: 700;}
+        .finger {position: absolute;right: 2vw;top: 1.8vh;width: 12vw;pointer-events: none;animation: finger-bounce 1s ease-in-out infinite;}
+        @keyframes finger-bounce {0%, 100% {    transform: translateY(0) rotate(-6deg);}50% {    transform: translateY(-0.8vh) rotate(2deg);}}
+    </style>
+</head>
+<body>
+<div class="page">
+    <div class="swiper mySwiper">
+        <div class="swiper-wrapper">
+            <% swiper_images.forEach(img => { %>
+                <div class="swiper-slide"><img src="<%= img %>" alt="slider_image"></div>
+            <% }) %>
+        </div>
+        <div class="swiper-pagination"></div>
+    </div>
+    <section class="header-price">
+        <div class="price-left">
+            <div class="num">厂家专属补贴 <span class="subsidy"><%= cost_price %></span>元, 补贴后 <span
+                    class="sale"><%= after_price %></span>元
+            </div>
+            <div class="exchange">选购 <strong><%= num %></strong> 瓶</div>
+        </div>
+        <div class="price-right">￥<%= before_price %></div>
+    </section>
+
+    <div class="main">
+        <section class="card title-card">
+            <div class="title-text">
+                <%= product_title %>
+            </div>
+            <div class="tags">
+                <span class="tag">品牌自营</span>
+                <span class="tag">纯粮酿造</span>
+                <span class="tag">限时补贴</span>
+                <span class="tag">欲购从速</span>
+            </div>
+        </section>
+
+        <section class="card activity-card">
+            您的 <span class="accent"><%= cost_price %>元消费补贴</span> 将在
+            <span class="accent" id="countdown">00时30分00秒</span> 后过期, 请尽快使用
+        </section>
+
+        <section class="card enough-card">
+            <div class="enough-title">放心购</div>
+            <div class="enough-items">
+                <div class="enough-item"><strong>正</strong>正品保证</div>
+                <div class="enough-item"><strong>退</strong>7天退换</div>
+                <div class="enough-item"><strong>保</strong>破损质保</div>
+                <div class="enough-item"><strong>时</strong>发货及时</div>
+            </div>
+        </section>
+
+        <section class="card purchase-card">
+            <div class="purchase-header">
+                <div>已兑换 <span class="count" id="purchaseCount">15694</span> 件, 原价: ￥<%= before_price %></div>
+                <div class="purchase-tag">限时兑换</div>
+            </div>
+            <div class="purchase-list-wrap">
+                <div class="purchase-list" id="purchaseList">
+                    <div class="purchase-item">
+                        <div class="purchase-avatar"><img src="./static/photo4.jpg" alt=""></div>
+                        <div class="purchase-info"><span class="purchase-name">奚**</span><span>购买了商品: </span><span
+                                class="purchase-desc"><%= product_name %></span></div>
+                        <div class="purchase-action"><a href="javascript:void(0)" class="submit">马上兑换</a></div>
+                    </div>
+                    <div class="purchase-item">
+                        <div class="purchase-avatar"><img src="./static/photo1.jpg" alt=""></div>
+                        <div class="purchase-info"><span class="purchase-name">金**</span><span>购买了商品: </span><span
+                                class="purchase-desc"><%= product_name %></span></div>
+                        <div class="purchase-action"><a href="javascript:void(0)" class="submit">马上兑换</a></div>
+                    </div>
+                    <div class="purchase-item">
+                        <div class="purchase-avatar"><img src="./static/photo2.jpg" alt=""></div>
+                        <div class="purchase-info"><span class="purchase-name">赵**</span><span>购买了商品: </span><span
+                                class="purchase-desc"><%= product_name %></span></div>
+                        <div class="purchase-action"><a href="javascript:void(0)" class="submit">马上兑换</a></div>
+                    </div>
+                    <div class="purchase-item">
+                        <div class="purchase-avatar"><img src="./static/photo3.jpg" alt=""></div>
+                        <div class="purchase-info"><span class="purchase-name">周**</span><span>购买了商品: </span><span
+                                class="purchase-desc"><%= product_name %></span></div>
+                        <div class="purchase-action"><a href="javascript:void(0)" class="submit">马上兑换</a></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card comments-card">
+            <div class="section-head">
+                <div class="title">用户评论(4598)条</div>
+                <div class="rate">好评率99%</div>
+            </div>
+            <div class="comment-item">
+                <div class="comment-user">赵**</div>
+                <div class="comment-content">
+                    趁着补贴价入手太划算了，性价比超高！原厂精装礼盒包装特别精致大气，扫码查验是正品。口感醇厚正宗，和实体店买的味道一模一样，太值了！
+                </div>
+            </div>
+            <div class="comment-item">
+                <div class="comment-user">周**</div>
+                <div class="comment-content">
+                    补贴价格真的很实惠，比实体店便宜不少！包装精美严实，高端感十足。酒质口感特别纯正，味道跟线下专柜完全没差别，自饮送礼都特别合适！
+                </div>
+            </div>
+            <div class="comment-item">
+                <div class="comment-user">王**</div>
+                <div class="comment-content">
+                    没想到补贴价就能买到这么好的五粮液酒，真心划算！精装包装精致高档，细节拉满。酒体绵柔醇厚，口味和实体店一模一样，正品无疑，强烈推荐！
+                </div>
+            </div>
+        </section>
+
+        <section class="detail-images">
+            <% main_images.forEach(img => { %>
+                <img src="<%= img %>" class="image" alt="详情图片">
+            <% }) %>
+        </section>
+    </div>
+
+    <div class="hint-bar">添加客服领取补贴 立即下单 优先发货！</div>
+    <div class="hint-tip">太有眼光了，这个商品获得了超过99%的好评！</div>
+</div>
+
+<div class="footer-bar">
+    <div class="footer-btn">
+        <button type="button" class="submit" id="footerSubmit">点击添加客服领<%= cost_price %>元补贴</button>
+        <p>原价<%= before_price %>元，补贴后仅需<%= after_price %>元</p>
+        <img src="./static/click.png" alt="点击" class="finger">
+    </div>
+</div>
+
+<script>
+    const swiper = new Swiper(".mySwiper", {
+        loop: true,
+        autoplay: {delay: 3000},
+        pagination: {el: ".swiper-pagination", clickable: true},
+        navigation: {
+            enabled: false,
+        },
+    });
+
+    const purchaseList = document.getElementById("purchaseList");
+    const purchaseCountEl = document.getElementById("purchaseCount");
+    const countdownEl = document.getElementById("countdown");
+    const toast = document.getElementById("toast");
+    let currentSlide = 0;
+    let purchaseCount = 15694;
+    let countdown = 30 * 60;
+
+    function getQueryParam(name) {
+        const params = new URLSearchParams(window.location.search);
+        return params.get(name) || "";
+    }
+
+    function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add("show");
+        clearTimeout(showToast.timer);
+        showToast.timer = setTimeout(() => {
+            toast.classList.remove("show");
+        }, 2200);
+    }
+
+    function updateCountdown() {
+        if (countdown < 0) {
+            countdown = 0;
+        }
+        const hours = String(Math.floor(countdown / 3600)).padStart(2, "0");
+        const minutes = String(Math.floor((countdown % 3600) / 60)).padStart(2, "0");
+        const seconds = String(countdown % 60).padStart(2, "0");
+        countdownEl.textContent = hours + "时" + minutes + "分" + seconds + "秒";
+        if (countdown > 0) {
+            countdown -= 1;
+        }
+    }
+
+    function initCountdown() {
+        updateCountdown();
+        setInterval(updateCountdown, 3000);
+    }
+
+    function initPurchaseScroll() {
+        setInterval(() => {
+            const first = purchaseList.firstElementChild;
+            if (!first) return;
+            purchaseList.appendChild(first.cloneNode(true));
+            first.remove();
+            purchaseCount += 1;
+            purchaseCountEl.textContent = String(purchaseCount);
+        }, 2200);
+    }
+
+    function gotoLink() {
+        const queryParams = new URLSearchParams(window.location.search);
+        const path = queryParams.get('path');
+        if (path) {
+            window.location.href = path;
+        }
+    }
+
+    document.querySelector('#footerSubmit').addEventListener('click', function () {
+        gotoLink()
+    })
+
+    initCountdown();
+    initPurchaseScroll();
+</script>
+</body>
+</html>
