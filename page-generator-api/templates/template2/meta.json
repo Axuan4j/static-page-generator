@@ -37,6 +37,12 @@
       ]
     },
     {
+      "key": "bg_audio",
+      "label": "音频",
+      "type": "audio",
+      "required": true
+    },
+    {
       "key": "target_image",
       "label": "底部跳转图片",
       "type": "image",

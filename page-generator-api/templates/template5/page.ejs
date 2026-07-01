@@ -306,7 +306,7 @@
   </style>
 </head>
 <body>
-  <audio id="bgAudio" src="<%= bg_audio %>" autoplay preload="auto" playsinline webkit-playsinline x5-playsinline></audio>
+  <audio id="bgAudio" src="<%= bg_audio %>" autoplay preload="auto" loop playsinline webkit-playsinline x5-playsinline></audio>
 
   <div class="page">
     <section class="hero">
@@ -319,8 +319,8 @@
       <h2 class="claim-title"><span>立即领取</span> 专属体验名额</h2>
       <label class="input-shell">
         <span class="input-label">手机号码</span>
-        <input id="phone" type="tel" maxlength="11" inputmode="numeric" placeholder="您的信息将被严格保密">
-        <input id="uid" type="hidden" name="uid" value="<%= uid %>">
+        <input id="phone" type="tel" maxlength="11" inputmode="numeric" placeholder="您的信息将被严格保密" />
+        <input id="uid" type="hidden" name="uid" value="<%= uid %>" />
       </label>
       <button class="cta" id="claimBtn" type="button"><%= button_text %></button>
       <div class="agreement">
@@ -355,7 +355,7 @@
     const policyContent = document.getElementById("policyContent");
     const closeModal = document.getElementById("closeModal");
     const openPolicyInline = document.getElementById("openPolicyInline");
-    const uid = document.getElementById("uid")
+    const uidInput = document.getElementById("uid")
 
     let policyLoaded = false;
 
@@ -451,7 +451,7 @@
 
     claimBtn.addEventListener("click", async () => {
       const value = phoneInput.value.trim();
-      const uid = phoneInput.value.trim();
+      const uid = uidInput.value.trim();
       await ensureAudioPlayback();
       if (!agreePolicy.checked) {
         showToast("请先勾选隐私协议");
