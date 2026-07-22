@@ -16,3 +16,7 @@ yarn-error.log*
 /.idea/
 **/dist/
 **/uploads
+.idea/
+
+# 七牛云真实密钥配置，仅保留 qiniu.example.json 作为示例
+/page-generator-api/config/qiniu.json

@@ -14,7 +14,8 @@
     "@fastify/static": "^7.0.4",
     "ejs": "^3.1.10",
     "fastify": "^4.29.1",
-    "fs-extra": "^11.2.0"
+    "fs-extra": "^11.2.0",
+    "qiniu": "^7.15.2"
   },
   "devDependencies": {
     "@types/ejs": "^3.1.5",

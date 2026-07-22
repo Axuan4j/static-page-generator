@@ -8,7 +8,7 @@ import { previewRoutes } from './routes/preview'
 import { generateRoutes } from './routes/generate'
 import { uploadRoutes } from './routes/upload'
 import { systemRoutes } from './routes/system'
-import { PUBLIC_DIR, TEMPLATES_DIR, UPLOAD_DIR } from './utils/path'
+import { PUBLIC_DIR, TEMPLATES_DIR } from './utils/path'
 
 /**
  * 启动 Fastify 服务并注册页面生成相关接口。
@@ -34,12 +34,6 @@ async function bootstrap() {
   })
 
   await app.register(fastifyStatic, {
-    root: UPLOAD_DIR,
-    prefix: '/uploads/',
-    decorateReply: false
-  })
-
-  await app.register(fastifyStatic, {
     root: TEMPLATES_DIR,
     prefix: '/template-assets/',
     decorateReply: false
@@ -59,7 +53,7 @@ async function bootstrap() {
 
     app.setNotFoundHandler(async (request, reply) => {
       const url = request.url || '/'
-      if (url.startsWith('/api/') || url.startsWith('/uploads/') || url.startsWith('/template-assets/')) {
+      if (url.startsWith('/api/') || url.startsWith('/template-assets/')) {
         return reply.status(404).send({
           success: false,
           message: `路由不存在: ${url}`

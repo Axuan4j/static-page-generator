@@ -83,8 +83,9 @@ export function reloadNginx(projectCode: string) {
   })
 }
 
-export async function uploadAsset(file: File): Promise<{ url: string }> {
+export async function uploadAsset(file: File, folderName: string): Promise<{ success: true; url: string }> {
   const formData = new FormData()
+  formData.append('folderName', folderName)
   formData.append('file', file)
 
   const resp = await fetch(`${BASE_URL}/api/upload`, {
@@ -93,7 +94,14 @@ export async function uploadAsset(file: File): Promise<{ url: string }> {
   })
 
   if (!resp.ok) {
-    throw new Error(`上传失败: ${resp.status}`)
+    let message = `上传失败: ${resp.status}`
+    try {
+      const errorBody = await resp.json()
+      message = errorBody?.message || message
+    } catch {
+      // 后端未返回 JSON 时保留 HTTP 状态，避免解析异常覆盖真正的上传错误。
+    }
+    throw new Error(message)
   }
 
   return resp.json()

@@ -326,7 +326,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, reactive, ref } from 'vue'
+import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
 import { MessagePlugin } from 'tdesign-vue-next'
 import type { UploadFile } from 'tdesign-vue-next'
 import { BASE_URL, generatePage, getProjects, getTemplateDetail, getTemplates, previewTemplate, reloadNginx, saveTemplate, uploadAsset } from './api'
@@ -346,6 +346,7 @@ const generateResult = ref<GenerateResponse | null>(null)
 const loading = reactive({ init: false, preview: false, generate: false, save: false, reload: false })
 const formData = reactive<Record<string, any>>({})
 const uploadFiles = reactive<Record<string, UploadFile[]>>({})
+let suppressFolderAssetReset = false
 
 const currentProject = computed(() => projects.value.find((item) => item.code === selectedProjectCode.value) || null)
 const projectDescriptionItems = computed(() => {
@@ -421,23 +422,92 @@ function resetFormData(meta: TemplateMeta) {
   const nextData: Record<string, any> = {}
   const allFields = [...meta.fixedFields, ...meta.dynamicFields]
 
+  suppressFolderAssetReset = true
+  try {
+    Object.keys(uploadFiles).forEach((key) => delete uploadFiles[key])
+
+    allFields.forEach((field) => {
+      if (field.type === 'array') {
+        nextData[field.key] = []
+      } else if (field.type === 'switch') {
+        nextData[field.key] = Boolean(field.defaultValue ?? false)
+      } else {
+        nextData[field.key] = field.defaultValue ?? ''
+      }
+
+      if (field.type === 'image' || field.type === 'audio') {
+        uploadFiles[field.key] = []
+      }
+    })
+
+    Object.keys(formData).forEach((key) => delete formData[key])
+    Object.assign(formData, nextData)
+  } finally {
+    suppressFolderAssetReset = false
+  }
+}
+
+/**
+ * 上传前校验公共目录参数，后端仍会执行同样校验作为最终安全边界。
+ */
+function getUploadFolderName() {
+  const folderName = String(formData.folderName ?? '').trim()
+  if (!folderName) {
+    throw new Error('请先填写文件夹名，再上传文件')
+  }
+  if (!/^[a-zA-Z0-9_-]+$/.test(folderName) || folderName.includes('..')) {
+    throw new Error('文件夹名只能包含字母、数字、下划线、中划线')
+  }
+  return folderName
+}
+
+function isCurrentUploadFolder(folderName: string) {
+  return String(formData.folderName ?? '').trim() === folderName
+}
+
+/**
+ * 文件夹名改变后清空资源字段，确保页面目录与七牛对象父路径始终一致。
+ */
+function clearUploadedAssetFields(): boolean {
+  if (!templateMeta.value) return false
+
+  let cleared = false
+  const allFields = [...templateMeta.value.fixedFields, ...templateMeta.value.dynamicFields]
   allFields.forEach((field) => {
-    if (field.type === 'array') {
-      nextData[field.key] = []
-    } else if (field.type === 'switch') {
-      nextData[field.key] = Boolean(field.defaultValue ?? false)
-    } else {
-      nextData[field.key] = field.defaultValue ?? ''
+    if (field.type === 'image' || field.type === 'audio') {
+      if (formData[field.key]) cleared = true
+      formData[field.key] = ''
+      uploadFiles[field.key] = []
+      return
     }
 
-    if (field.type === 'image' || field.type === 'audio') {
-      uploadFiles[field.key] = []
+    if (field.type === 'array' && Array.isArray(formData[field.key])) {
+      const assetItemFields = (field.itemFields || []).filter((item) => item.type === 'image' || item.type === 'audio')
+      formData[field.key].forEach((row: unknown) => {
+        if (!row || typeof row !== 'object') return
+        assetItemFields.forEach((itemField) => {
+          const record = row as Record<string, any>
+          if (record[itemField.key]) cleared = true
+          record[itemField.key] = ''
+        })
+      })
     }
   })
 
-  Object.keys(formData).forEach((key) => delete formData[key])
-  Object.assign(formData, nextData)
+  return cleared
 }
+
+watch(
+  () => formData.folderName,
+  (nextValue, previousValue) => {
+    if (suppressFolderAssetReset) return
+    if (String(nextValue ?? '').trim() === String(previousValue ?? '').trim()) return
+    if (clearUploadedAssetFields()) {
+      showMessage('文件夹名已修改，请按新目录重新上传图片和音频', 'info')
+    }
+  },
+  { flush: 'sync' }
+)
 
 /**
  * 判断数组字段是否属于简单值数组。
@@ -500,7 +570,11 @@ function clearArrayImageField(fieldKey: string, index: number, itemKey: string) 
  */
 async function handleImageUploadProxy(file: UploadFile, fieldKey: string) {
   try {
-    const result = await uploadAsset(file.raw as File)
+    const folderName = getUploadFolderName()
+    const result = await uploadAsset(file.raw as File, folderName)
+    if (!isCurrentUploadFolder(folderName)) {
+      throw new Error('上传期间文件夹名已修改，请重新上传文件')
+    }
     const publicUrl = normalizeImageUrl(result.url)
     formData[fieldKey] = publicUrl
     uploadFiles[fieldKey] = [{
@@ -521,7 +595,11 @@ async function handleImageUploadProxy(file: UploadFile, fieldKey: string) {
  */
 async function handleArrayImageUploadProxy(file: UploadFile, fieldKey: string, index: number, itemKey: string) {
   try {
-    const result = await uploadAsset(file.raw as File)
+    const folderName = getUploadFolderName()
+    const result = await uploadAsset(file.raw as File, folderName)
+    if (!isCurrentUploadFolder(folderName)) {
+      throw new Error('上传期间文件夹名已修改，请重新上传文件')
+    }
     formData[fieldKey][index][itemKey] = normalizeImageUrl(result.url)
     return { status: 'success', response: { url: formData[fieldKey][index][itemKey] } }
   } catch (error: any) {
@@ -532,7 +610,11 @@ async function handleArrayImageUploadProxy(file: UploadFile, fieldKey: string, i
 
 async function handleAudioUploadProxy(file: UploadFile, fieldKey: string) {
   try {
-    const result = await uploadAsset(file.raw as File)
+    const folderName = getUploadFolderName()
+    const result = await uploadAsset(file.raw as File, folderName)
+    if (!isCurrentUploadFolder(folderName)) {
+      throw new Error('上传期间文件夹名已修改，请重新上传文件')
+    }
     const publicUrl = normalizeImageUrl(result.url)
     formData[fieldKey] = publicUrl
     uploadFiles[fieldKey] = [{
