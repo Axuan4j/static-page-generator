@@ -1,0 +1,98 @@
+{
+  "code": "template3",
+  "name": "轮播图酒水补贴模板",
+  "description": "顶部轮播 + 商品标签 + 酒水补贴",
+  "engine": "ejs",
+  "output": {
+    "htmlFile": "index.html",
+    "staticDir": "static"
+  },
+  "fixedFields": [
+    {
+      "key": "title",
+      "label": "页面标题",
+      "type": "input",
+      "required": true
+    },
+    {
+      "key": "folderName",
+      "label": "文件夹名",
+      "type": "input",
+      "required": true
+    }
+  ],
+  "dynamicFields": [
+    {
+      "key": "swiper_images",
+      "label": "轮播图数组",
+      "type": "array",
+      "required": true,
+      "itemFields": [
+        {
+          "key": "value",
+          "label": "图片地址",
+          "type": "image",
+          "required": true
+        }
+      ]
+    },
+    {
+      "key": "main_images",
+      "label": "主图数组",
+      "type": "array",
+      "required": true,
+      "itemFields": [
+        {
+          "key": "value",
+          "label": "图片地址",
+          "type": "image",
+          "required": true
+        }
+      ]
+    },
+    {
+      "key": "bg_audio",
+      "label": "音频",
+      "type": "audio",
+      "required": true
+    },
+    {
+      "key": "product_title",
+      "label": "产品描述",
+      "type": "input",
+      "required": true,
+      "defaultValue": "五粮液酒厂为回馈广大新老顾客，浓香型52度白酒五粮液2瓶精装仅需198！！！添加客服领取补贴，数量有限，售完即止"
+    },
+    {
+      "key": "product_name",
+      "label": "产品名称",
+      "type": "input",
+      "required": true,
+      "defaultValue": "五粮液密鉴 52度浓香型白酒礼盒装 2瓶补贴专享"
+    },
+    {
+      "key": "cost_price",
+      "label": "减免价格",
+      "type": "input",
+      "required": true
+    },
+    {
+      "key": "after_price",
+      "label": "最终价格",
+      "type": "input",
+      "required": true
+    },
+    {
+      "key": "before_price",
+      "label": "原始价格",
+      "type": "input",
+      "required": true
+    },
+    {
+      "key": "num",
+      "label": "套餐数量",
+      "type": "input",
+      "required": true
+    }
+  ]
+}
