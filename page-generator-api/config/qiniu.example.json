@@ -1,0 +1,6 @@
+{
+  "ak": "你的七牛 Access Key",
+  "sk": "你的七牛 Secret Key",
+  "bucket": "你的存储桶名称",
+  "domain": "https://你的七牛公开访问域名"
+}
