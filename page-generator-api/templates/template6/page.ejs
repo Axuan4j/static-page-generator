@@ -54,9 +54,9 @@
         .hint-tip {margin: 0.8vh 2.6vw 0;text-align: center;font-size: 3vw;color: #92400e;}
         .footer-bar {position: fixed;left: 0;right: 0;bottom: 0;background: rgba(255, 255, 255, 0.97);box-shadow: 0 -0.8vh 2.2vh rgba(0, 0, 0, 0.08);padding: 1.2vh 0 1.5vh;z-index: 50;}
         .footer-btn {width: 92vw;margin: 0 auto;position: relative;}
-        .footer-btn button {width: 100%;border: 0;border-radius: 999px;background: linear-gradient(180deg, #ff3838, #d90416);color: #fff;min-height: 6.4vh;font-size: 4.5vw;font-weight: 800;box-shadow: 0 0.8vh 1.6vh rgba(217, 4, 22, 0.24);}
+        .footer-btn button {width: 100%;border: 0;border-radius: 999px;background: linear-gradient(180deg, #ff3838, #d90416);color: #fff;min-height: 6.4vh;font-size: 4vw;font-weight: 800;box-shadow: 0 0.8vh 1.6vh rgba(217, 4, 22, 0.24);}
         .footer-btn p {margin: 0.7vh 0 0;text-align: center;color: #c41e3a;font-size: 3vw;font-weight: 700;}
-        .finger {position: absolute;right: 2vw;top: 1.8vh;width: 12vw;pointer-events: none;animation: finger-bounce 1s ease-in-out infinite;}
+        .finger {position: absolute;right: 0;top: 4.8vh;width: 12vw;pointer-events: none;animation: finger-bounce 1s ease-in-out infinite;}
         @keyframes finger-bounce {0%, 100% {    transform: translateY(0) rotate(-6deg);}50% {    transform: translateY(-0.8vh) rotate(2deg);}}
     </style>
 </head>
@@ -84,10 +84,10 @@
     </div>
     <section class="header-price">
         <div class="price-left">
-            <div class="num">厂家专属补贴 <span class="subsidy"><%= cost_price %></span>元, 补贴后 <span
+            <div class="num">积分减免 <span class="subsidy"><%= cost_price %></span>元, 减免后 <span
                     class="sale"><%= after_price %></span>元
             </div>
-            <div class="exchange">选购 <strong><%= num %></strong> 瓶</div>
+            <div class="exchange">选购 <strong><%= num %></strong> </div>
         </div>
         <div class="price-right">￥<%= before_price %></div>
     </section>
@@ -106,7 +106,7 @@
         </section>
 
         <section class="card activity-card">
-            您的 <span class="accent"><%= cost_price %>元消费补贴</span> 将在
+            您的 <span class="accent"><%= cost_price %>元积分减免</span> 将在
             <span class="accent" id="countdown">00时30分00秒</span> 后过期, 请尽快使用
         </section>
 
@@ -187,14 +187,13 @@
         </section>
     </div>
 
-    <div class="hint-bar">添加客服领取补贴 立即下单 优先发货！</div>
+    <div class="hint-bar">领取补贴 立即下单 优先发货！</div>
     <div class="hint-tip">太有眼光了，这个商品获得了超过99%的好评！</div>
 </div>
 
 <div class="footer-bar">
     <div class="footer-btn">
-        <button type="button" class="submit" id="footerSubmit">点击添加客服领<%= cost_price %>元补贴</button>
-        <p>原价<%= before_price %>元，补贴后仅需<%= after_price %>元</p>
+        <button type="button" class="submit" id="footerSubmit">点击领取<%= cost_price %>元积分减免</button>
         <img src="./static/click.png" alt="点击" class="finger">
     </div>
 </div>
