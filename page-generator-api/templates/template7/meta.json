@@ -1,0 +1,72 @@
+{
+  "code": "template7",
+  "name": "酒水带声音点击切换问题页",
+  "description": "酒水落地页n张主图+跳转按钮,点击后切换到问题页面",
+  "engine": "ejs",
+  "output": {
+    "htmlFile": "index.html",
+    "staticDir": "static"
+  },
+  "fixedFields": [
+    {
+      "key": "title",
+      "label": "页面标题",
+      "type": "input",
+      "required": true
+    },
+    {
+      "key": "folderName",
+      "label": "文件夹名",
+      "type": "input",
+      "required": true
+    }
+  ],
+  "dynamicFields": [
+    {
+      "key": "main_images",
+      "label": "主图数组",
+      "type": "array",
+      "required": true,
+      "itemFields": [
+        {
+          "key": "value",
+          "label": "图片地址",
+          "type": "image",
+          "required": true
+        }
+      ]
+    },
+    {
+      "key": "target_image",
+      "label": "底部跳转图片",
+      "type": "image",
+      "required": true
+    },
+    {
+      "key": "bg_audio",
+      "label": "音频",
+      "type": "audio",
+      "required": true
+    },
+    {
+      "key": "question_image",
+      "label": "问题页图片",
+      "type": "image",
+      "required": true
+    },
+    {
+      "key": "question_array",
+      "label": "询问用户问题数组",
+      "type": "array",
+      "required": true,
+      "itemFields": [
+        {
+          "key": "value",
+          "label": "问题类型选项",
+          "type": "question",
+          "required": true
+        }
+      ]
+    }
+  ]
+}

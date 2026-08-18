@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title><%= title %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <style>
+        * {box-sizing: border-box;}
+        html, body {margin: 0;padding: 0;background: #f5f6f8;color: #1f2937;font-family: "PingFang SC", "Microsoft YaHei", sans-serif;}
+        body {min-height: 100vh;overflow-x: hidden;}
+        [hidden] {display: none !important;}
+        img {display: block;max-width: 100%;}
+        #app {width: 100%;min-height: 100vh;padding-bottom: 10vh;background: #fff;}
+        #main {width: 100%;}
+        .image {width: 100%;height: auto;cursor: pointer;}
+        #target {position: fixed;right: 0;bottom: 0;left: 0;z-index: 999;width: 100%;height: 10vh;object-fit: fill;cursor: pointer;}
+        #questionPage {width: 100%;min-height: 100vh;padding-bottom: 4vh;background: #f5f6f8;}
+        .question-main-image {width: 100%;height: auto;}
+        .question-list {padding: 2.4vh 4vw 0;}
+        .question-card {margin-bottom: 1.8vh;padding: 2.2vh 4vw;border-radius: 3vw;background: #fff;box-shadow: 0 0.6vh 2vh rgba(15, 23, 42, 0.08);}
+        .question-card.is-invalid {box-shadow: 0 0 0 0.4vw #ef4444, 0 0.6vh 2vh rgba(15, 23, 42, 0.08);}
+        .question-title {margin: 0 0 1.6vh;font-size: 4.2vw;line-height: 1.5;font-weight: 700;}
+        .question-option {display: flex;align-items: center;gap: 2.4vw;margin-top: 1.2vh;padding: 1.5vh 3vw;border: 0.2vw solid #e5e7eb;border-radius: 2.4vw;background: #fafafa;font-size: 3.8vw;line-height: 1.45;cursor: pointer;}
+        .question-option input {width: 4.6vw;height: 4.6vw;flex: 0 0 auto;margin: 0;accent-color: #2563eb;}
+        .question-option:has(input:checked) {border-color: #2563eb;background: #eff6ff;color: #1d4ed8;}
+        .complete-button {display: block;width: calc(100% - 8vw);min-height: 6.6vh;margin: 2.6vh 4vw 0;border: 0;border-radius: 999px;background: linear-gradient(180deg, #3b82f6, #2563eb);color: #fff;font-size: 4.2vw;font-weight: 700;box-shadow: 0 0.8vh 2vh rgba(37, 99, 235, 0.25);}
+    </style>
+</head>
+<body>
+<% if (typeof bg_audio !== 'undefined' && bg_audio) { %>
+    <audio
+            id="bgAudio"
+            src="<%= bg_audio %>"
+            loop
+            autoplay
+            preload="auto"
+            playsinline
+            webkit-playsinline
+            x5-playsinline>
+    </audio>
+<% } %>
+
+<div id="app">
+    <div id="main">
+        <% main_images.forEach(img => { %>
+            <img src="<%= img %>" class="image entry-trigger" alt="主图">
+        <% }) %>
+    </div>
+    <img src="<%= target_image %>" id="target" class="entry-trigger" alt="跳转图片">
+</div>
+
+<section id="questionPage" hidden aria-hidden="true">
+    <img src="<%= question_image %>" class="question-main-image" alt="问题主图">
+    <form id="questionForm" class="question-list" novalidate>
+        <% question_array.forEach((item, questionIndex) => { %>
+            <section class="question-card" data-question-index="<%= questionIndex %>">
+                <h2 class="question-title"><%= questionIndex + 1 %>. <%= item.question %></h2>
+                <% (Array.isArray(item.options) ? item.options : []).forEach((option, optionIndex) => { %>
+                    <label class="question-option">
+                        <input type="radio" name="question_<%= questionIndex %>" value="<%= optionIndex %>">
+                        <span><%= option %></span>
+                    </label>
+                <% }) %>
+            </section>
+        <% }) %>
+        <button type="button" id="completeButton" class="complete-button">完成</button>
+    </form>
+</section>
+
+<script>
+    const urlObj = new URL(window.location.href);
+    const path = urlObj.searchParams.get("path");
+    const pageTitle = urlObj.searchParams.get("title");
+    const landingPage = document.getElementById("app");
+    const questionPage = document.getElementById("questionPage");
+    const questionForm = document.getElementById("questionForm");
+    const completeButton = document.getElementById("completeButton");
+
+    if (pageTitle) {
+        document.title = pageTitle;
+    }
+
+    function showQuestionPage() {
+        landingPage.hidden = true;
+        landingPage.setAttribute("aria-hidden", "true");
+        questionPage.hidden = false;
+        questionPage.setAttribute("aria-hidden", "false");
+        window.scrollTo(0, 0);
+    }
+
+    document.querySelectorAll(".entry-trigger").forEach((element) => {
+        element.addEventListener("click", showQuestionPage);
+    });
+
+    questionForm.addEventListener("change", (event) => {
+        const card = event.target.closest(".question-card");
+        if (card) {
+            card.classList.remove("is-invalid");
+        }
+    });
+
+    completeButton.addEventListener("click", () => {
+        const questionCards = Array.from(questionForm.querySelectorAll(".question-card"));
+        const unansweredCard = questionCards.find((card) => !card.querySelector('input[type="radio"]:checked'));
+
+        if (unansweredCard) {
+            unansweredCard.classList.add("is-invalid");
+            unansweredCard.scrollIntoView({behavior: "smooth", block: "center"});
+            window.alert("请先完成所有问题");
+            return;
+        }
+
+        if (!path) {
+            return;
+        }
+
+        window.location.href = path;
+    });
+
+    let audioActivated = false;
+    const audio = document.getElementById("bgAudio");
+
+    async function ensureAudioPlayback() {
+        try {
+            if (audioActivated && !audio.paused) return;
+            audio.muted = false;
+            await audio.play();
+            audioActivated = true;
+        } catch (error) {
+            // 移动端浏览器可能要求用户首次交互后才能播放。
+        }
+    }
+
+    function bindAudioAutoPlay() {
+        const retryPlay = () => {
+            ensureAudioPlayback();
+        };
+
+        document.addEventListener("DOMContentLoaded", retryPlay);
+        window.addEventListener("load", retryPlay);
+        window.addEventListener("pageshow", retryPlay);
+        document.addEventListener("WeixinJSBridgeReady", retryPlay, false);
+        document.addEventListener("YixinJSBridgeReady", retryPlay, false);
+        document.addEventListener("readystatechange", () => {
+            if (document.readyState === "complete") {
+                retryPlay();
+            }
+        });
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "visible") {
+                retryPlay();
+            }
+        });
+        audio.addEventListener("canplay", retryPlay);
+        document.addEventListener("click", retryPlay, {once: true});
+        document.addEventListener("touchstart", retryPlay, {once: true});
+    }
+
+    if (audio) {
+        bindAudioAutoPlay();
+        ensureAudioPlayback();
+    }
+</script>
+</body>
+</html>

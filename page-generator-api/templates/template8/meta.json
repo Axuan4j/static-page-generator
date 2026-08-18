@@ -1,0 +1,72 @@
+{
+  "code": "template8",
+  "name": "酒水模板带问题单页面",
+  "description": "酒水落地页n张主图+跳转按钮,原始页面不跳转问题选择",
+  "engine": "ejs",
+  "output": {
+    "htmlFile": "index.html",
+    "staticDir": "static"
+  },
+  "fixedFields": [
+    {
+      "key": "title",
+      "label": "页面标题",
+      "type": "input",
+      "required": true
+    },
+    {
+      "key": "folderName",
+      "label": "文件夹名",
+      "type": "input",
+      "required": true
+    }
+  ],
+  "dynamicFields": [
+    {
+      "key": "main_images",
+      "label": "主图数组",
+      "type": "array",
+      "required": true,
+      "itemFields": [
+        {
+          "key": "value",
+          "label": "图片地址",
+          "type": "image",
+          "required": true
+        }
+      ]
+    },
+    {
+      "key": "btn_text",
+      "label": "底部跳转按钮文字",
+      "type": "input",
+      "required": true
+    },
+    {
+      "key": "question_start",
+      "label": "问题开始提示语",
+      "type": "input",
+      "required": true
+    },
+    {
+      "key": "question_array",
+      "label": "询问用户问题数组",
+      "type": "array",
+      "required": true,
+      "itemFields": [
+        {
+          "key": "value",
+          "label": "问题类型选项",
+          "type": "question",
+          "required": true
+        }
+      ]
+    },
+    {
+      "key": "question_end",
+      "label": "问题结束提示语",
+      "type": "input",
+      "required": true
+    }
+  ]
+}

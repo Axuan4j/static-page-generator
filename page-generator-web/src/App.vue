@@ -218,7 +218,46 @@
                             <div v-for="itemField in field.itemFields || []" :key="itemField.key" class="nested-form-item">
                               <div class="mini-label">{{ itemField.label }}</div>
 
-                              <t-input v-if="itemField.type === 'input'" v-model="formData[field.key][index][itemField.key]" />
+                              <template v-if="itemField.type === 'question'">
+                                <div class="question-editor">
+                                  <t-input
+                                    v-model="formData[field.key][index][itemField.key].question"
+                                    placeholder="请输入问题"
+                                  />
+                                  <div class="question-option-list">
+                                    <div
+                                      v-for="(_, optionIndex) in formData[field.key][index][itemField.key].options"
+                                      :key="`${field.key}-${index}-${itemField.key}-${optionIndex}`"
+                                      class="question-option-item"
+                                    >
+                                      <span class="question-option-radio"></span>
+                                      <t-input
+                                        v-model="formData[field.key][index][itemField.key].options[optionIndex]"
+                                        :placeholder="`请输入选项 ${optionIndex + 1}`"
+                                      />
+                                      <t-button
+                                        theme="danger"
+                                        variant="text"
+                                        size="small"
+                                        :disabled="formData[field.key][index][itemField.key].options.length <= 2"
+                                        @click="removeQuestionOption(field.key, index, itemField.key, optionIndex)"
+                                      >
+                                        删除选项
+                                      </t-button>
+                                    </div>
+                                  </div>
+                                  <t-button
+                                    theme="primary"
+                                    variant="outline"
+                                    size="small"
+                                    class="question-option-add"
+                                    @click="addQuestionOption(field.key, index, itemField.key)"
+                                  >
+                                    新增选项
+                                  </t-button>
+                                </div>
+                              </template>
+                              <t-input v-else-if="itemField.type === 'input'" v-model="formData[field.key][index][itemField.key]" />
                               <t-textarea
                                 v-else-if="itemField.type === 'textarea'"
                                 v-model="formData[field.key][index][itemField.key]"
@@ -241,7 +280,10 @@
                                 <t-button theme="primary" variant="outline" size="small">选择图片</t-button>
                               </t-upload>
 
-                              <div v-if="getArrayImageUrl(field.key, index, itemField.key)" class="upload-preview-card upload-preview-card--nested">
+                              <div
+                                v-if="itemField.type === 'image' && getArrayImageUrl(field.key, index, itemField.key)"
+                                class="upload-preview-card upload-preview-card--nested"
+                              >
                                 <img
                                   :src="getArrayImageUrl(field.key, index, itemField.key)"
                                   :alt="itemField.label"
@@ -330,7 +372,7 @@ import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
 import { MessagePlugin } from 'tdesign-vue-next'
 import type { UploadFile } from 'tdesign-vue-next'
 import { BASE_URL, generatePage, getProjects, getTemplateDetail, getTemplates, previewTemplate, reloadNginx, saveTemplate, uploadAsset } from './api'
-import type { GenerateResponse, ProjectConfig, TemplateField, TemplateMeta } from './types'
+import type { GenerateResponse, ProjectConfig, QuestionFieldValue, TemplateField, TemplateMeta } from './types'
 
 const templates = ref<TemplateMeta[]>([])
 const projects = ref<ProjectConfig[]>([])
@@ -373,8 +415,8 @@ function showMessage(text: string, type: 'success' | 'error' | 'info' = 'info') 
 /**
  * 将接口返回的图片地址整理为浏览器可直接访问的完整地址。
  */
-function normalizeImageUrl(url?: string) {
-  if (!url) return ''
+function normalizeImageUrl(url?: unknown) {
+  if (typeof url !== 'string' || !url) return ''
   if (url.startsWith('http://') || url.startsWith('https://')) return url
   return `${BASE_URL}${url}`
 }
@@ -513,7 +555,11 @@ watch(
  * 判断数组字段是否属于简单值数组。
  */
 function isSimpleArrayField(field: TemplateField) {
-  return (field.itemFields || []).length === 1 && field.itemFields?.[0]?.key === 'value' && field.itemFields?.[0]?.type !== 'image'
+  const itemType = field.itemFields?.[0]?.type
+  return (field.itemFields || []).length === 1
+    && field.itemFields?.[0]?.key === 'value'
+    && itemType !== 'image'
+    && itemType !== 'question'
 }
 
 /**
@@ -531,9 +577,29 @@ function addArrayItem(field: TemplateField) {
 
   const row: Record<string, any> = {}
   ;(field.itemFields || []).forEach((itemField) => {
-    row[itemField.key] = itemField.type === 'image' ? '' : ''
+    row[itemField.key] = itemField.type === 'question'
+      ? { question: '', options: ['', ''] } satisfies QuestionFieldValue
+      : ''
   })
   formData[field.key].push(row)
+}
+
+/**
+ * 为一道问题追加可编辑的单选项。
+ */
+function addQuestionOption(fieldKey: string, index: number, itemKey: string) {
+  const question = formData[fieldKey]?.[index]?.[itemKey] as QuestionFieldValue | undefined
+  if (!question || !Array.isArray(question.options)) return
+  question.options.push('')
+}
+
+/**
+ * 删除问题选项，每道题至少保留两个单选项。
+ */
+function removeQuestionOption(fieldKey: string, index: number, itemKey: string, optionIndex: number) {
+  const question = formData[fieldKey]?.[index]?.[itemKey] as QuestionFieldValue | undefined
+  if (!question || !Array.isArray(question.options) || question.options.length <= 2) return
+  question.options.splice(optionIndex, 1)
 }
 
 /**
@@ -898,7 +964,7 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  max-height: 40%;
+  height: 40vh;
   overflow: auto;
 }
 
@@ -955,7 +1021,7 @@ onMounted(async () => {
 }
 
 .form-scroll-area {
-  height: 90%;
+  height: 75vh;
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
@@ -1007,6 +1073,36 @@ onMounted(async () => {
   color: #526171;
   font-size: 12px;
   font-weight: 600;
+}
+
+.question-editor,
+.question-option-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.question-option-list {
+  margin-top: 2px;
+}
+
+.question-option-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.question-option-radio {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  border: 2px solid #94a3b8;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.question-option-add {
+  align-self: flex-start;
 }
 
 .array-del-btn {

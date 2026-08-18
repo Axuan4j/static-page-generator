@@ -3,10 +3,15 @@ export interface FieldOption {
   value: string | number | boolean;
 }
 
+export interface QuestionFieldValue {
+  question: string;
+  options: string[];
+}
+
 export interface ArrayItemField {
   key: string;
   label: string;
-  type: 'input' | 'textarea' | 'number' | 'select' | 'image' | 'audio';
+  type: 'input' | 'textarea' | 'number' | 'select' | 'image' | 'audio' | 'question';
   required?: boolean;
   options?: FieldOption[];
 }
