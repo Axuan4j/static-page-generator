@@ -1,0 +1,52 @@
+{
+  "code": "template9",
+  "name": "主图带声音单问题跳转",
+  "description": "主图n张带声音单问题跳转",
+  "engine": "ejs",
+  "output": {
+    "htmlFile": "index.html",
+    "staticDir": "static"
+  },
+  "fixedFields": [
+    {
+      "key": "title",
+      "label": "页面标题",
+      "type": "input",
+      "required": true
+    },
+    {
+      "key": "folderName",
+      "label": "文件夹名",
+      "type": "input",
+      "required": true
+    }
+  ],
+  "dynamicFields": [
+    {
+      "key": "main_images",
+      "label": "主图数组",
+      "type": "array",
+      "required": true,
+      "itemFields": [
+        {
+          "key": "value",
+          "label": "图片地址",
+          "type": "image",
+          "required": true
+        }
+      ]
+    },
+    {
+      "key": "bg_audio",
+      "label": "音频",
+      "type": "audio",
+      "required": true
+    },
+    {
+      "key": "btn_text",
+      "label": "底部跳转按钮文字",
+      "type": "input",
+      "required": true
+    }
+  ]
+}

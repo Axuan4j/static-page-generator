@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="format-detection" content="telephone=no">
+    <title>40岁男人的逆袭之路，全靠它！</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f4f4f4;
+            color: #222;
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+        }
+
+        button {
+            font: inherit;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button:focus-visible {
+            outline: 3px solid #763fb3;
+            outline-offset: 3px;
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+
+        .page {
+            max-width: 750px;
+            margin: auto;
+            padding-bottom: calc(110px + env(safe-area-inset-bottom));
+            background: #fff;
+        }
+
+        .page img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .purchase-bar {
+            position: fixed;
+            z-index: 10;
+            bottom: 0;
+            left: 50%;
+            width: 100%;
+            max-width: 750px;
+            transform: translateX(-50%);
+            padding: 13px 22px calc(12px + env(safe-area-inset-bottom));
+            background: #fffffff7;
+            box-shadow: 0 -2px 12px #0000000d;
+        }
+
+        .purchase-button {
+            width: 100%;
+            min-height: 58px;
+            border: 0;
+            border-radius: 12px;
+            background: #df2519;
+            color: #fff;
+            font-size: 23px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            box-shadow: 0 5px 12px #de281b40;
+            animation: bounce 1s ease-in-out infinite;
+        }
+
+        .purchase-button {
+            padding: 10px 8px;
+        }
+
+        .purchase-title {
+            display: block;
+        }
+
+        .purchase-note {
+            display: block;
+            margin-top: 5px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 400;
+            line-height: 1.5;
+            letter-spacing: 0;
+            color: #fff;
+        }
+
+        .overlay {
+            position: fixed;
+            z-index: 20;
+            inset: 0;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            background: #0006;
+        }
+
+        .dialog {
+            width: 100%;
+            max-width: 750px;
+            max-height: 88vh;
+            max-height: 88dvh;
+            display: flex;
+            flex-direction: column;
+            border-radius: 18px 18px 0 0;
+            background: #eee;
+            overflow: hidden;
+            box-shadow: 0 -5px 24px #0002;
+        }
+
+        .dialog-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px 4px 20px;
+            flex-shrink: 0;
+        }
+
+        .dialog-header h1 {
+            margin: 0;
+            font-size: 17px;
+        }
+
+        .close {
+            width: 36px;
+            height: 36px;
+            border: 0;
+            background: transparent;
+            color: #666;
+            font-size: 30px;
+            line-height: 1;
+        }
+
+        .questions {
+            padding: 8px 14px 2px;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .welcome {
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+            padding: 14px;
+            margin: 0 0 14px;
+            border-radius: 12px;
+            background: #fff;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .avatar {
+            display: grid;
+            place-items: center;
+            flex: 0 0 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #df2519;
+            color: white;
+            font-size: 17px;
+        }
+
+        .question {
+            margin: 0 0 14px;
+            padding: 15px 14px 17px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 3px #00000008;
+        }
+
+        .question h2 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 0 17px;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .number {
+            display: inline-grid;
+            place-items: center;
+            flex: 0 0 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #df2519;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 400;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            padding: 0 5px;
+        }
+
+        .options--long {
+            grid-template-columns: 1fr;
+        }
+
+        .option {
+            min-height: 48px;
+            padding: 11px 7px;
+            border: 2px solid transparent;
+            border-radius: 9px;
+            background: linear-gradient(#ff6738, #ff451b);
+            box-shadow: 0 4px 6px #ed461c33;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1.4;
+        }
+
+        .option[aria-pressed="true"] {
+            border-color: #b92014;
+            background: #d92316;
+            box-shadow: inset 0 0 0 1px #fff8;
+        }
+
+        .dialog-footer {
+            flex-shrink: 0;
+            padding: 12px 18px calc(18px + env(safe-area-inset-bottom));
+            background: #eee;
+        }
+
+        .consult {
+            width: 100%;
+            min-height: 66px;
+            border: 0;
+            border-radius: 15px;
+            background: #d92216;
+            color: #fff;
+            font-size: 23px;
+            letter-spacing: 2px;
+            font-weight: 700;
+            box-shadow: 0 5px 12px #ce271d40;
+        }
+
+        .status {
+            margin: 0 0 10px;
+            text-align: center;
+            font-size: 14px;
+            color: #b51c13;
+            line-height: 1.5;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.035);
+            }
+        }
+
+        @media (max-width: 360px) {
+            .question {
+                padding-right: 10px;
+                padding-left: 10px;
+            }
+
+            .option {
+                font-size: 14px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .purchase-button {
+                animation: none;
+            }
+        }
+    </style>
+</head>
+<body>
+<% if (typeof bg_audio !== 'undefined' && bg_audio) { %>
+    <audio
+            id="bgAudio"
+            src="<%= bg_audio %>"
+            loop
+            autoplay
+            preload="auto"
+            playsinline
+            webkit-playsinline
+            x5-playsinline>
+    </audio>
+<% } %>
+<main class="page">
+    <% main_images.forEach((img, index) => { %>
+        <img src="<%= img %>" class="landing-image" alt="详情图片<%= index + 1 %>" loading="eager"
+             decoding="async" <%- index === 0 ? 'fetchpriority="high"' : '' %>>
+    <% }) %>
+</main>
+<footer class="purchase-bar">
+    <button class="purchase-button" id="purchaseButton" type="button" aria-haspopup="dialog"
+            aria-controls="questionDialog">
+        <span class="purchase-title"><%= btn_text %>></span>
+    </button>
+</footer>
+<div class="overlay" id="overlay" hidden>
+    <section class="dialog" id="questionDialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
+        <header class="dialog-header">
+            <h1 id="dialogTitle">温馨提示</h1>
+            <button class="close" id="closeButton" type="button" aria-label="关闭问题框">×</button>
+        </header>
+        <div class="questions">
+            <div id="questionList"></div>
+        </div>
+    </section>
+</div>
+<script>
+    (function () {
+        'use strict';
+        const questions = [
+            {
+                title: '请问预约名额到手,是否可以接受付款',
+                options: [{text: '我点错了', 'action': 'close'}, {text: '价格合适可以付款', action: 'target'}],
+                long: true
+            }
+        ];
+        const overlay = document.getElementById('overlay');
+        const dialog = document.getElementById('questionDialog');
+        const purchaseButton = document.getElementById('purchaseButton');
+        const closeButton = document.getElementById('closeButton');
+        const status = document.getElementById('status');
+        const answers = new Array(questions.length).fill(null);
+        let previousOverflow = '';
+        let navigating = false;
+
+        function redirect() {
+            if (navigating) return;
+            const path = new URLSearchParams(window.location.search).get('path');
+            try {
+                if (!path || !path.trim()) throw new Error('missing path');
+                const target = new URL(path, window.location.href);
+                if (!['http:', 'https:'].includes(target.protocol)) throw new Error('invalid path');
+                navigating = true;
+                window.location.assign(target.href);
+            } catch (error) {
+                navigating = false;
+                status.textContent = '咨询链接暂不可用，请联系页面提供方。';
+                status.hidden = false;
+            }
+        }
+
+        function closeDialog() {
+            overlay.hidden = true;
+            document.body.style.overflow = previousOverflow;
+            purchaseButton.focus({preventScroll: true});
+        }
+
+        questions.forEach(function (question, index) {
+            const section = document.createElement('section');
+            section.className = 'question';
+            section.setAttribute('aria-labelledby', 'question-' + index);
+            const title = document.createElement('h2');
+            title.id = 'question-' + index;
+            const number = document.createElement('span');
+            number.className = 'number';
+            number.textContent = index + 1;
+            title.append(number, document.createTextNode(question.title));
+            const options = document.createElement('div');
+            options.className = 'options' + (question.long ? ' options--long' : '');
+            question.options.forEach(function (answer) {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'option';
+                button.textContent = answer.text;
+                button.setAttribute('aria-pressed', 'false');
+                button.addEventListener('click', function () {
+                    if (answer.action === 'close') {
+                        closeDialog();
+                    } else if (answer.action === 'target') {
+                        redirect()
+                    } else {
+                        console.error('未知', answer.action)
+                    }
+                });
+                options.appendChild(button);
+            });
+            section.append(title, options);
+            document.getElementById('questionList').appendChild(section);
+        });
+
+        purchaseButton.addEventListener('click', function () {
+            previousOverflow = document.body.style.overflow;
+            document.body.style.overflow = 'hidden';
+            overlay.hidden = false;
+            closeButton.focus({preventScroll: true});
+        });
+        closeButton.addEventListener('click', closeDialog);
+        overlay.addEventListener('click', function (event) {
+            if (event.target === overlay) closeDialog();
+        });
+        document.getElementById('consultButton').addEventListener('click', redirect);
+        document.addEventListener('keydown', function (event) {
+            if (overlay.hidden) return;
+            if (event.key === 'Escape') closeDialog();
+            if (event.key === 'Tab') {
+                const buttons = dialog.querySelectorAll('button');
+                const first = buttons[0];
+                const last = buttons[buttons.length - 1];
+                if (event.shiftKey && document.activeElement === first) {
+                    event.preventDefault();
+                    last.focus();
+                } else if (!event.shiftKey && document.activeElement === last) {
+                    event.preventDefault();
+                    first.focus();
+                }
+            }
+        });
+    }());
+
+    let audioActivated = false;
+    const audio = document.getElementById("bgAudio");
+
+    async function ensureAudioPlayback() {
+        try {
+            if (audioActivated && !audio.paused) return;
+            audio.muted = false;
+            await audio.play();
+            audioActivated = true;
+        } catch (error) {
+            // 移动端浏览器可能要求用户首次交互后才能播放。
+        }
+    }
+
+    function bindAudioAutoPlay() {
+        const retryPlay = () => {
+            ensureAudioPlayback();
+        };
+
+        document.addEventListener("DOMContentLoaded", retryPlay);
+        window.addEventListener("load", retryPlay);
+        window.addEventListener("pageshow", retryPlay);
+        document.addEventListener("WeixinJSBridgeReady", retryPlay, false);
+        document.addEventListener("YixinJSBridgeReady", retryPlay, false);
+        document.addEventListener("readystatechange", () => {
+            if (document.readyState === "complete") {
+                retryPlay();
+            }
+        });
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "visible") {
+                retryPlay();
+            }
+        });
+        audio.addEventListener("canplay", retryPlay);
+        document.addEventListener("click", retryPlay, {once: true});
+        document.addEventListener("touchstart", retryPlay, {once: true});
+    }
+
+    if (audio) {
+        bindAudioAutoPlay();
+        ensureAudioPlayback();
+    }
+</script>
+</body>
+</html>
